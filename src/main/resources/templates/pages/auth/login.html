@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- PENTING: TIDAK ADA layout:decorate di sini! -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - Grace Thrift</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #0a0a0a;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Background Image */
+        .background-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .bg-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* Background Lil Uzi Vert - Simpan foto di /static/assets/images/lil-uzi-bg.jpg */
+            background: url('/assets/images/lil-uzi-bg.jpg') center center/cover;
+            filter: brightness(0.75) contrast(1.05);
+        }
+
+        .bg-gradient {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, 
+                rgba(0, 0, 0, 0.1) 0%,
+                rgba(0, 0, 0, 0.15) 100%);
+        }
+
+        /* Animated Gradient Orbs */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.25;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .orb-1 {
+            width: 450px;
+            height: 450px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8787 100%);
+            top: -100px;
+            right: -100px;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, #ffa94d 0%, #ffb366 100%);
+            bottom: -100px;
+            left: -100px;
+            animation-delay: 2s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(30px, -30px) scale(1.1); }
+            50% { transform: translate(-20px, 20px) scale(0.9); }
+            75% { transform: translate(20px, 10px) scale(1.05); }
+        }
+
+        /* Login Container */
+        .login-container {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-wrapper {
+            width: 100%;
+            max-width: 440px;
+            animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Login Card - SANGAT TRANSPARAN PERMANEN */
+        .login-card {
+            background: rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 28px;
+            padding: 45px 40px;
+            box-shadow: 
+                0 20px 40px -12px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.05);
+        }
+
+        /* Logo & Header */
+        .brand-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .brand-logo {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.9) 0%, rgba(255, 135, 135, 0.9) 100%);
+            backdrop-filter: blur(10px);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 
+                0 8px 20px rgba(255, 107, 107, 0.5),
+                0 0 0 1px rgba(255, 255, 255, 0.2);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .brand-logo i {
+            font-size: 34px;
+            color: white;
+        }
+
+        .brand-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: white;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .brand-subtitle {
+            display: inline-block;
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.9) 0%, rgba(255, 169, 77, 0.9) 100%);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        /* Form Groups */
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: block;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(0, 0, 0, 0.5);
+            font-size: 18px;
+            z-index: 2;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 16px 18px 16px 52px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(5px);
+            border: 1.5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 14px;
+            color: #333;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .form-input::placeholder {
+            color: rgba(0, 0, 0, 0.4);
+        }
+
+        .form-input:focus {
+            background: rgba(255, 255, 255, 0.95);
+            border-color: rgba(255, 107, 107, 0.6);
+            box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.15);
+        }
+
+        .form-input:focus + .input-icon {
+            color: #ff6b6b;
+        }
+
+        /* Error Messages */
+        .error-message {
+            color: #ffa94d;
+            font-size: 13px;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        .global-error {
+            background: rgba(255, 107, 107, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 107, 107, 0.4);
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 24px;
+            color: #ffb3b3;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Submit Button */
+        .btn-submit {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.95) 0%, rgba(255, 135, 135, 0.95) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 14px;
+            color: white;
+            font-size: 15px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4);
+            margin-top: 10px;
+            margin-bottom: 24px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(255, 107, 107, 0.5);
+            background: linear-gradient(135deg, rgba(255, 135, 135, 0.95) 0%, rgba(255, 107, 107, 0.95) 100%);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        /* Register Link */
+        .register-section {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .register-text {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            margin-bottom: 0;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .register-link {
+            color: #ff8787;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .register-link:hover {
+            color: #ffb3b3;
+        }
+
+        .register-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ffa94d 100%);
+            transition: width 0.3s ease;
+        }
+
+        .register-link:hover::after {
+            width: 100%;
+        }
+
+        /* Forgot Password */
+        .forgot-password {
+            text-align: right;
+            margin-top: -10px;
+            margin-bottom: 24px;
+        }
+
+        .forgot-link {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 13px;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .forgot-link:hover {
+            color: #ff8787;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 35px 30px;
+            }
+
+            .brand-title {
+                font-size: 24px;
+            }
+
+            .form-input {
+                padding: 14px 16px 14px 48px;
+                font-size: 14px;
+            }
+        }
+
+        /* Show password toggle */
+        .toggle-password {
+            position: absolute;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(0, 0, 0, 0.5);
+            cursor: pointer;
+            font-size: 18px;
+            z-index: 2;
+            transition: color 0.3s ease;
+        }
+
+        .toggle-password:hover {
+            color: #ff8787;
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Layer -->
+    <div class="background-layer">
+        <div class="bg-image"></div>
+        <div class="bg-gradient"></div>
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+    </div>
+
+    <!-- Login Container -->
+    <div class="login-container">
+        <div class="login-wrapper">
+            <div class="login-card">
+                <!-- Brand Section -->
+                <div class="brand-section">
+                    <div class="brand-logo">
+                        <i class="bi bi-tags-fill"></i>
+                    </div>
+                    <h1 class="brand-title">GRACE THRIFT</h1>
+                    <span class="brand-subtitle">Admin Access</span>
+                </div>
+
+                <!-- Form -->
+                <form th:action="@{/auth/login/post}" method="post" th:object="${loginForm}">
+                    
+                    <!-- Global Error -->
+                    <div th:if="${#fields.hasGlobalErrors()}" class="global-error">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                        <div>
+                            <th:block th:each="err : ${#fields.globalErrors()}" th:text="${err}"></th:block>
+                        </div>
+                    </div>
+
+                    <!-- Email Input -->
+                    <div class="form-group">
+                        <label class="form-label">Email Address</label>
+                        <div class="input-wrapper">
+                            <i class="bi bi-envelope-fill input-icon"></i>
+                            <input type="email" 
+                                   class="form-input" 
+                                   th:field="*{email}" 
+                                   placeholder="admin@grace.com" 
+                                   autocomplete="email" 
+                                   required>
+                        </div>
+                        <div th:if="${#fields.hasErrors('email')}" class="error-message">
+                            <i class="bi bi-info-circle-fill"></i>
+                            <span th:each="err : ${#fields.errors('email')}" th:text="${err}"></span>
+                        </div>
+                    </div>
+
+                    <!-- Password Input -->
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <div class="input-wrapper">
+                            <i class="bi bi-lock-fill input-icon"></i>
+                            <input type="password" 
+                                   class="form-input" 
+                                   th:field="*{password}" 
+                                   placeholder="Enter your password" 
+                                   autocomplete="current-password"
+                                   id="passwordInput"
+                                   required>
+                            <i class="bi bi-eye-fill toggle-password" 
+                               onclick="togglePassword()" 
+                               id="toggleIcon"></i>
+                        </div>
+                        <div th:if="${#fields.hasErrors('password')}" class="error-message">
+                            <i class="bi bi-info-circle-fill"></i>
+                            <span th:each="err : ${#fields.errors('password')}" th:text="${err}"></span>
+                        </div>
+                    </div>
+
+                    <!-- Forgot Password -->
+                    <div class="forgot-password">
+                        <a href="#" class="forgot-link">Forgot password?</a>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn-submit">
+                        Sign In to Dashboard
+                    </button>
+
+                    <!-- Register Section -->
+                    <div class="register-section">
+                        <p class="register-text">
+                            New staff member? 
+                            <a th:href="@{/auth/register}" class="register-link">Create an account</a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Toggle password visibility
+        function togglePassword() {
+            const passwordInput = document.getElementById('passwordInput');
+            const toggleIcon = document.getElementById('toggleIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('bi-eye-fill');
+                toggleIcon.classList.add('bi-eye-slash-fill');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('bi-eye-slash-fill');
+                toggleIcon.classList.add('bi-eye-fill');
+            }
+        }
+    </script>
+</body>
+</html>

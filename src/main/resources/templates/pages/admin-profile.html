@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Profile - Grace Thrift</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            overflow-x: hidden;
+        }
+
+        .profile-page {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0EA5E9 0%, #06B6D4 50%, #22D3EE 100%);
+            padding: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Animated Background Lights */
+        .light {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.5;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .light-1 {
+            width: 400px;
+            height: 400px;
+            background: #22D3EE;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .light-2 {
+            width: 500px;
+            height: 500px;
+            background: #0EA5E9;
+            top: 50%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+
+        .light-3 {
+            width: 350px;
+            height: 350px;
+            background: #06B6D4;
+            bottom: 10%;
+            left: 50%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(40px, -40px) scale(1.1); }
+            66% { transform: translate(-40px, 40px) scale(0.9); }
+        }
+
+        /* Shooting Stars Animation */
+        .stars-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.8);
+            animation: shooting-star linear infinite;
+        }
+
+        .star::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 80px;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0) 100%);
+            transform: translateX(-100%);
+        }
+
+        @keyframes shooting-star {
+            0% {
+                transform: translate(0, 0) rotate(-45deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-1000px, 1000px) rotate(-45deg);
+                opacity: 0;
+            }
+        }
+
+        /* Different stars with different timings and positions */
+        .star:nth-child(1) {
+            top: 10%;
+            right: 10%;
+            animation-duration: 3s;
+            animation-delay: 0s;
+        }
+
+        .star:nth-child(2) {
+            top: 20%;
+            right: 30%;
+            animation-duration: 2.5s;
+            animation-delay: 1.5s;
+        }
+
+        .star:nth-child(3) {
+            top: 5%;
+            right: 50%;
+            animation-duration: 3.5s;
+            animation-delay: 0.8s;
+        }
+
+        .star:nth-child(4) {
+            top: 30%;
+            right: 70%;
+            animation-duration: 2.8s;
+            animation-delay: 2.2s;
+        }
+
+        .star:nth-child(5) {
+            top: 15%;
+            right: 90%;
+            animation-duration: 3.2s;
+            animation-delay: 1s;
+        }
+
+        .star:nth-child(6) {
+            top: 40%;
+            right: 20%;
+            animation-duration: 2.7s;
+            animation-delay: 3s;
+        }
+
+        .star:nth-child(7) {
+            top: 25%;
+            right: 60%;
+            animation-duration: 3s;
+            animation-delay: 0.5s;
+        }
+
+        .star:nth-child(8) {
+            top: 35%;
+            right: 40%;
+            animation-duration: 2.9s;
+            animation-delay: 2.5s;
+        }
+
+        /* Floating sparkles */
+        .sparkle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+            animation: sparkle-float 4s ease-in-out infinite;
+            opacity: 0;
+            box-shadow: 0 0 15px 3px rgba(255, 255, 255, 0.8);
+        }
+
+        @keyframes sparkle-float {
+            0%, 100% {
+                transform: translateY(0) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+                transform: translateY(-20px) scale(1);
+            }
+            50% {
+                opacity: 0.8;
+                transform: translateY(-100px) scale(1.2);
+            }
+            90% {
+                opacity: 0.3;
+            }
+            100% {
+                transform: translateY(-200px) scale(0.5);
+                opacity: 0;
+            }
+        }
+
+        .sparkle:nth-child(1) { left: 20%; animation-delay: 0s; }
+        .sparkle:nth-child(2) { left: 40%; animation-delay: 1s; }
+        .sparkle:nth-child(3) { left: 60%; animation-delay: 0.5s; }
+        .sparkle:nth-child(4) { left: 80%; animation-delay: 1.5s; }
+        .sparkle:nth-child(5) { left: 30%; animation-delay: 2s; }
+        .sparkle:nth-child(6) { left: 70%; animation-delay: 2.5s; }
+        .sparkle:nth-child(7) { left: 50%; animation-delay: 0.8s; }
+        .sparkle:nth-child(8) { left: 90%; animation-delay: 1.8s; }
+
+        /* Header Navigation */
+        .top-nav {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 100;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 800;
+        }
+
+        .nav-brand i {
+            font-size: 2rem;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 10px 25px;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .nav-link:active {
+            transform: translateY(0);
+        }
+
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .btn-logout {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-logout:hover {
+            background: rgba(239, 68, 68, 0.3);
+        }
+
+        .back-button-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 40px 20px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .btn-back {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+        }
+        
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateX(-8px);
+            color: white;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-back:active {
+            transform: translateX(-8px) scale(0.95);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px 40px;
+            position: relative;
+            z-index: 5;
+        }
+
+        .profile-card {
+            background: rgba(59, 130, 246, 0.15);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.4) 0%, rgba(6, 182, 212, 0.3) 50%, rgba(34, 211, 238, 0.4) 100%);
+            backdrop-filter: blur(15px);
+            padding: 60px 30px;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 20px,
+                rgba(255, 255, 255, 0.05) 20px,
+                rgba(255, 255, 255, 0.05) 40px
+            );
+            animation: slidePattern 20s linear infinite;
+        }
+
+        @keyframes slidePattern {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        .profile-avatar-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 25px;
+        }
+
+        .profile-avatar {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            border: 6px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4),
+                        0 0 0 15px rgba(255, 255, 255, 0.15);
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.8) 0%, rgba(6, 182, 212, 0.9) 100%);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            color: white;
+            position: relative;
+            z-index: 2;
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .status-indicator {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            width: 25px;
+            height: 25px;
+            background: #10b981;
+            border-radius: 50%;
+            border: 4px solid white;
+            z-index: 3;
+            animation: blink 2s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; box-shadow: 0 0 20px #10b981; }
+            50% { opacity: 0.6; box-shadow: 0 0 10px #10b981; }
+        }
+
+        .profile-name {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 2;
+        }
+
+        .profile-role {
+            font-size: 1.2rem;
+            opacity: 0.95;
+            position: relative;
+            z-index: 2;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 10px 25px;
+            border-radius: 50px;
+            display: inline-block;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .profile-body {
+            padding: 50px;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: center;
+            padding: 25px;
+            margin-bottom: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-left: 5px solid rgba(96, 165, 250, 0.8);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-row::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 5px;
+            background: linear-gradient(180deg, #60a5fa 0%, #06b6d4 100%);
+            transition: width 0.3s;
+        }
+
+        .info-row:hover {
+            transform: translateX(10px);
+            box-shadow: 0 10px 30px rgba(96, 165, 250, 0.3);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .info-row:hover::before {
+            width: 100%;
+            opacity: 0.08;
+        }
+
+        .info-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.8) 0%, rgba(6, 182, 212, 0.8) 100%);
+            backdrop-filter: blur(10px);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.8rem;
+            margin-right: 25px;
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+            position: relative;
+            z-index: 2;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .info-content {
+            flex: 1;
+            position: relative;
+            z-index: 2;
+        }
+
+        .info-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 700;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            font-size: 1.15rem;
+            color: white;
+            font-weight: 700;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+            margin-bottom: 40px;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.3) 0%, rgba(6, 182, 212, 0.3) 100%);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 35px 25px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .stat-box:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(59, 130, 246, 0.4);
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.4) 0%, rgba(6, 182, 212, 0.4) 100%);
+        }
+
+        .stat-box:hover::before {
+            opacity: 1;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: white;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 2;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 600;
+            font-size: 1rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .btn-edit-profile {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.8) 0%, rgba(6, 182, 212, 0.8) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 18px 50px;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .btn-edit-profile::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn-edit-profile:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-edit-profile:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(59, 130, 246, 0.6);
+            color: white;
+        }
+
+        .btn-edit-profile i {
+            position: relative;
+            z-index: 2;
+        }
+
+        .btn-edit-profile span {
+            position: relative;
+            z-index: 2;
+        }
+
+        @media (max-width: 768px) {
+            .top-nav {
+                padding: 15px 20px;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .nav-menu {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .container {
+                padding: 0 20px 30px;
+            }
+
+            .back-button-container {
+                padding: 20px;
+            }
+
+            .profile-body {
+                padding: 30px 20px;
+            }
+
+            .profile-name {
+                font-size: 1.8rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .info-row {
+                padding: 20px;
+            }
+
+            .info-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-page">
+        <!-- Animated Background Lights -->
+        <div class="light light-1"></div>
+        <div class="light light-2"></div>
+        <div class="light light-3"></div>
+
+        <!-- Shooting Stars -->
+        <div class="stars-container">
+            <div class="star"></div>
+            <div class="star"></div>
+            <div class="star"></div>
+            <div class="star"></div>
+            <div class="star"></div>
+            <div class="star"></div>
+            <div class="star"></div>
+            <div class="star"></div>
+        </div>
+
+        <!-- Floating Sparkles -->
+        <div class="stars-container" style="bottom: 0; top: auto; height: 50%;">
+            <div class="sparkle"></div>
+            <div class="sparkle"></div>
+            <div class="sparkle"></div>
+            <div class="sparkle"></div>
+            <div class="sparkle"></div>
+            <div class="sparkle"></div>
+            <div class="sparkle"></div>
+            <div class="sparkle"></div>
+        </div>
+
+        <!-- Top Navigation -->
+        <div class="top-nav">
+            <div class="nav-brand">
+                <i class="bi bi-grid-3x3-gap-fill"></i>
+                DASHBOARD
+            </div>
+            <div class="nav-menu">
+                <a href="#" class="nav-link">
+                    <i class="bi bi-info-circle-fill"></i>
+                    Information
+                </a>
+                <a href="#" class="nav-link active">
+                    <i class="bi bi-person-circle"></i>
+                    Admin Profile
+                </a>
+                <a href="#" class="nav-link btn-logout">
+                    <i class="bi bi-box-arrow-right"></i>
+                    Logout
+                </a>
+            </div>
+        </div>
+
+        <!-- Back Button -->
+        <div class="back-button-container">
+            <a href="javascript:history.back()" class="btn-back" onclick="alert('Kembali ke Dashboard')">
+                <i class="bi bi-arrow-left-circle-fill"></i>
+                Back to Dashboard
+            </a>
+        </div>
+
+        <div class="container">
+            <div class="profile-card">
+                <!-- Profile Header -->
+                <div class="profile-header">
+                    <div class="profile-avatar-wrapper">
+                        <div class="profile-avatar">
+                            <i class="bi bi-person-circle"></i>
+                        </div>
+                        <div class="status-indicator" title="Online"></div>
+                    </div>
+                    <h1 class="profile-name">Administrator</h1>
+                    <p class="profile-role">
+                        <i class="bi bi-shield-check"></i> Admin - Grace Thrift Store
+                    </p>
+                </div>
+
+                <!-- Profile Body -->
+                <div class="profile-body">
+                    <!-- Info Rows -->
+                    <div class="info-row">
+                        <div class="info-icon">
+                            <i class="bi bi-person-fill"></i>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-label">Full Name</div>
+                            <div class="info-value">Kifran Hutasoit</div>
+                        </div>
+                    </div>
+
+                    <div class="info-row">
+                        <div class="info-icon">
+                            <i class="bi bi-envelope-fill"></i>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-label">Email Address</div>
+                            <div class="info-value">admin@gracethrift.com</div>
+                        </div>
+                    </div>
+
+                    <div class="info-row">
+                        <div class="info-icon">
+                            <i class="bi bi-telephone-fill"></i>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-label">Phone Number</div>
+                            <div class="info-value">0813-6227-0549</div>
+                        </div>
+                    </div>
+
+                    <div class="info-row">
+                        <div class="info-icon">
+                            <i class="bi bi-geo-alt-fill"></i>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-label">Location</div>
+                            <div class="info-value">Jl. Thrift Store No. 123, Sitoluama, Sumatera Utara</div>
+                        </div>
+                    </div>
+
+                    <div class="info-row">
+                        <div class="info-icon">
+                            <i class="bi bi-calendar-check-fill"></i>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-label">Joined Date</div>
+                            <div class="info-value">December 25, 2025</div>
+                        </div>
+                    </div>
+
+                    <!-- Statistics -->
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <div class="stat-number">100</div>
+                            <div class="stat-label">Total Products</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number">90</div>
+                            <div class="stat-label">Items Sold</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number">10</div>
+                            <div class="stat-label">Ready Stock</div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div style="text-align: center; margin-top: 30px;">
+                        <a href="#" class="btn-edit-profile">
+                            <i class="bi bi-pencil-square"></i>
+                            <span>Edit Profile</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

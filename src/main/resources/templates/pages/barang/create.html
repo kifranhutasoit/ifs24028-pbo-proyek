@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layouts/base}">
+
+<head>
+    <title>Upload Item - Grace Thrift</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0f0f14;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Enhanced Background Layer */
+        .background-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .bg-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1558769132-cb1aea1f1d09?w=1600') center center/cover;
+            filter: brightness(0.2) contrast(1.2) saturate(0.7);
+        }
+
+        .bg-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse at 20% 30%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 70%, rgba(168, 85, 247, 0.12) 0%, transparent 50%),
+                linear-gradient(180deg, rgba(15, 15, 20, 0.7) 0%, rgba(15, 15, 20, 0.95) 100%);
+        }
+
+        /* Soft Floating Orbs */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.2;
+            animation: float 15s ease-in-out infinite;
+        }
+
+        .orb-1 {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.3) 0%, transparent 70%);
+            top: -200px;
+            right: -200px;
+        }
+
+        .orb-2 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.25) 0%, transparent 70%);
+            bottom: -150px;
+            left: -150px;
+            animation-delay: 5s;
+        }
+
+        .orb-3 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.2) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation-delay: 10s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(40px, -40px) scale(1.05); }
+            66% { transform: translate(-40px, 40px) scale(0.95); }
+        }
+
+        /* Page Wrapper */
+        .page-wrapper {
+            position: relative;
+            z-index: 10;
+            padding: 50px 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 920px;
+            margin: 0 auto;
+        }
+
+        /* Modern Back Button */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            padding: 12px 22px;
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            margin-bottom: 30px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .back-link:hover {
+            background: rgba(99, 102, 241, 0.15);
+            color: white;
+            transform: translateX(-5px);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+
+        /* Enhanced Form Card */
+        .form-card {
+            background: rgba(24, 24, 32, 0.75);
+            backdrop-filter: blur(40px) saturate(150%);
+            -webkit-backdrop-filter: blur(40px) saturate(150%);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            animation: slideUp 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Elegant Form Header */
+        .form-header {
+            background: linear-gradient(135deg, 
+                rgba(99, 102, 241, 0.15) 0%, 
+                rgba(168, 85, 247, 0.1) 100%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 40px 45px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            color: white;
+        }
+
+        .header-icon {
+            width: 72px;
+            height: 72px;
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            box-shadow: 
+                0 10px 30px rgba(99, 102, 241, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            animation: gentlePulse 3s ease-in-out infinite;
+        }
+
+        @keyframes gentlePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+
+        .header-text {
+            flex: 1;
+        }
+
+        .header-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin: 0 0 6px 0;
+            background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+        }
+
+        .header-subtitle {
+            margin: 0;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+            font-weight: 400;
+        }
+
+        /* Form Body */
+        .form-body {
+            padding: 45px;
+        }
+
+        .form-section {
+            margin-bottom: 45px;
+            animation: fadeInUp 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .form-section:nth-child(1) { animation-delay: 0.15s; }
+        .form-section:nth-child(2) { animation-delay: 0.25s; }
+        .form-section:nth-child(3) { animation-delay: 0.35s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(25px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-title {
+            color: #c7d2fe;
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title i {
+            font-size: 1.1rem;
+            color: #818cf8;
+        }
+
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(to right, rgba(99, 102, 241, 0.3), transparent);
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.95);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+        }
+
+        .form-label i {
+            color: #a5b4fc;
+            font-size: 1rem;
+        }
+
+        .form-control, .form-select {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1.5px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 14px 18px;
+            color: white;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 0.95rem;
+            font-family: inherit;
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .form-control:focus, .form-select:focus {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: #6366f1;
+            box-shadow: 
+                0 0 0 4px rgba(99, 102, 241, 0.1),
+                0 4px 12px rgba(99, 102, 241, 0.15);
+            outline: none;
+            color: white;
+        }
+
+        .form-select {
+            cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cpath fill='%236366f1' d='M7 10L2 5h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 18px center;
+            padding-right: 48px;
+        }
+
+        .form-select option {
+            background: #1e1e2e;
+            color: white;
+            padding: 12px;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 140px;
+            line-height: 1.7;
+        }
+
+        .form-text {
+            color: rgba(255, 255, 255, 0.45);
+            font-size: 0.82rem;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .form-text i {
+            color: #818cf8;
+            font-size: 0.9rem;
+        }
+
+        .input-group-modern {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+        }
+
+        /* Enhanced File Input */
+        .file-input-wrapper {
+            position: relative;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            opacity: 0;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        .file-input-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 16px 20px;
+            background: rgba(99, 102, 241, 0.08);
+            border: 2px dashed rgba(99, 102, 241, 0.3);
+            border-radius: 14px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 600;
+            min-height: 65px;
+        }
+
+        .file-input-label:hover {
+            border-color: #6366f1;
+            background: rgba(99, 102, 241, 0.15);
+            color: white;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        .file-input-label i {
+            font-size: 1.4rem;
+            color: #818cf8;
+        }
+
+        /* Subtle Divider */
+        .divider {
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.08), transparent);
+            margin: 45px 0 35px 0;
+        }
+
+        /* Modern Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 18px;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 20px;
+        }
+
+        .btn-cancel {
+            background: rgba(255, 255, 255, 0.04);
+            color: rgba(255, 255, 255, 0.85);
+            border: 1.5px solid rgba(255, 255, 255, 0.08);
+            padding: 15px 38px;
+            border-radius: 14px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: white;
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            color: white;
+            border: none;
+            padding: 15px 48px;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 
+                0 8px 24px rgba(99, 102, 241, 0.35),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 
+                0 12px 32px rgba(99, 102, 241, 0.45),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-submit:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-submit i {
+            font-size: 1.2rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .form-body {
+                padding: 35px 28px;
+            }
+
+            .form-header {
+                padding: 35px 28px;
+            }
+
+            .header-title {
+                font-size: 1.65rem;
+            }
+
+            .header-icon {
+                width: 64px;
+                height: 64px;
+                font-size: 28px;
+            }
+
+            .input-group-modern {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+
+            .action-buttons {
+                flex-direction: column-reverse;
+                gap: 14px;
+            }
+
+            .btn-cancel, .btn-submit {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Smooth scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(99, 102, 241, 0.3);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(99, 102, 241, 0.5);
+        }
+    </style>
+</head>
+
+<body>
+    <div layout:fragment="content">
+        <!-- Background Layer -->
+        <div class="background-layer">
+            <div class="bg-image"></div>
+            <div class="bg-overlay"></div>
+            <div class="orb orb-1"></div>
+            <div class="orb orb-2"></div>
+            <div class="orb orb-3"></div>
+        </div>
+
+        <div class="page-wrapper">
+            <div class="container">
+                
+                <!-- Back Link -->
+                <a th:href="@{/barang}" class="back-link">
+                    <i class="bi bi-arrow-left"></i>
+                    <span>Back to Home</span>
+                </a>
+
+                <!-- Form Card -->
+                <div class="form-card">
+                    <!-- Header -->
+                    <div class="form-header">
+                        <div class="header-content">
+                            <div class="header-icon">
+                                <i class="bi bi-box-seam"></i>
+                            </div>
+                            <div class="header-text">
+                                <h1 class="header-title">Upload Stock Items</h1>
+                                <p class="header-subtitle">Add new thrift products to the Grace Thrift catalog</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Body -->
+                    <div class="form-body">
+                        <form th:action="@{/barang/store}" method="post" enctype="multipart/form-data" th:object="${barang}">
+                            
+                            <!-- SECTION: Informasi Produk -->
+                            <div class="form-section">
+                                <div class="section-title">
+                                    <i class="bi bi-info-circle-fill"></i>
+                                    Product Information
+                                </div>
+
+                                <!-- KATEGORI -->
+                                <div class="mb-4">
+                                    <label class="form-label">
+                                        <i class="bi bi-grid-3x3-gap-fill"></i>
+                                        Category
+                                    </label>
+                                    <select class="form-select" th:field="*{kategori}" required>
+                                        <option value="" disabled selected>Select product category...</option>
+                                        <option value="Jaket">🧥 Jacket</option>
+                                        <option value="Topi">🧢 Hat</option>
+                                        <option value="Sepatu">👟 Shoes</option>
+                                        <option value="Celana">👖 Pants</option>
+                                        <option value="Kaos">👕 Shirt</option>
+                                        <option value="Kemeja">👔 Formal Shirt</option>
+                                        <option value="Sweater">🧶 Sweater</option>
+                                        <option value="Hoodie">🧥 Hoodie</option>
+                                        <option value="Dress">👗 Dress</option>
+                                        <option value="Rok">👗 Skirt</option>
+                                        <option value="Tas">👜 Bag</option>
+                                        <option value="Aksesoris">💍 Accessories</option>
+                                        <option value="Lainnya">📦 Others</option>
+                                    </select>
+                                    <div class="form-text">
+                                        <i class="bi bi-lightbulb"></i>
+                                        Choose the most appropriate category for your item
+                                    </div>
+                                </div>
+
+                                <!-- NAMA PRODUK -->
+                                <div class="mb-4">
+                                    <label class="form-label">
+                                        <i class="bi bi-tag-fill"></i>
+                                        Product Name
+                                    </label>
+                                    <input type="text" class="form-control" th:field="*{namaBarang}" 
+                                        placeholder="e.g., Vintage Levi's 501 Denim Jacket" required>
+                                    <div class="form-text">
+                                        <i class="bi bi-lightbulb"></i>
+                                        Include brand and product details for better visibility
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- SECTION: Detail Produk -->
+                            <div class="form-section">
+                                <div class="section-title">
+                                    <i class="bi bi-card-text"></i>
+                                    Product Details
+                                </div>
+
+                                <!-- DESKRIPSI -->
+                                <div class="mb-4">
+                                    <label class="form-label">
+                                        <i class="bi bi-card-list"></i>
+                                        Conditions and Description
+                                    </label>
+                                    <textarea class="form-control" th:field="*{deskripsi}" rows="5" 
+                                        placeholder="Describe item condition, size, color, brand, material, and any unique features..."></textarea>
+                                    <div class="form-text">
+                                        <i class="bi bi-lightbulb"></i>
+                                        Detailed descriptions help customers make informed decisions
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- SECTION: Tanggal & Dokumentasi -->
+                            <div class="form-section">
+                                <div class="section-title">
+                                    <i class="bi bi-calendar-check"></i>
+                                    Date & Documentation
+                                </div>
+
+                                <div class="input-group-modern">
+                                    <!-- TANGGAL -->
+                                    <div>
+                                        <label class="form-label">
+                                            <i class="bi bi-calendar3"></i>
+                                            Restock Date
+                                        </label>
+                                        <input type="datetime-local" class="form-control" th:field="*{tanggalMasuk}" required>
+                                        <div class="form-text">
+                                            <i class="bi bi-clock"></i>
+                                            When did this item arrive in inventory?
+                                        </div>
+                                    </div>
+
+                                    <!-- FOTO -->
+                                    <div>
+                                        <label class="form-label">
+                                            <i class="bi bi-camera-fill"></i>
+                                            Product Photo
+                                        </label>
+                                        <div class="file-input-wrapper">
+                                            <input type="file" name="fileGambar" accept="image/*" id="fileInput">
+                                            <label class="file-input-label" for="fileInput">
+                                                <i class="bi bi-cloud-upload"></i>
+                                                <span id="fileName">Choose Photo</span>
+                                            </label>
+                                        </div>
+                                        <div class="form-text">
+                                            <i class="bi bi-image"></i>
+                                            JPG/PNG format, max 2MB
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="divider"></div>
+
+                            <!-- ACTION BUTTONS -->
+                            <div class="action-buttons">
+                                <a th:href="@{/barang}" class="btn-cancel">
+                                    <i class="bi bi-x-circle"></i>
+                                    Cancel
+                                </a>
+                                <button type="submit" class="btn-submit">
+                                    <i class="bi bi-cloud-upload-fill"></i>
+                                    Publish Item
+                                </button>
+                            </div>
+                        </form> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Update filename when file is selected
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const fileName = e.target.files[0]?.name || 'Choose Photo';
+            document.getElementById('fileName').textContent = fileName.length > 30 
+                ? fileName.substring(0, 30) + '...' 
+                : fileName;
+        });
+    </script>
+</body>
+</html> 

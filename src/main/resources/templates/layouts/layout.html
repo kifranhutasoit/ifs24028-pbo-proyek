@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title layout:title-pattern="$CONTENT_TITLE - $LAYOUT_TITLE">Grace Thrift Store</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <!-- FONTS: Montserrat (Judul) & Poppins (Isi) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* 1. BACKGROUND GLOBAL (Streetwear Style) */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #4c1d95; /* Fallback color */
+            
+            /* Gambar Background + Lapisan Ungu Transparan */
+            background: 
+                linear-gradient(135deg, rgba(76, 29, 149, 0.90) 0%, rgba(102, 126, 234, 0.85) 100%),
+                url('https://images.unsplash.com/photo-1617140662243-7f8396655b3d?q=80&w=2070&auto=format&fit=crop');
+            
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed; /* Agar background diam saat discroll */
+            min-height: 100vh;
+            color: #333; /* Warna text default (akan ditimpa card putih) */
+        }
+
+        /* 2. NAVBAR GLASSMORPHISM (Efek Kaca) */
+        .navbar-glass {
+            background: rgba(0, 0, 0, 0.25); /* Hitam transparan */
+            backdrop-filter: blur(15px);      /* Efek blur */
+            -webkit-backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .navbar-brand {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            font-size: 1.4rem;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.7) !important;
+            transition: all 0.3s;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: #ffffff !important;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        /* 3. TOMBOL LOGOUT KEREN */
+        .btn-logout {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            transition: all 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: #ef4444; /* Merah saat hover */
+            border-color: #ef4444;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4);
+        }
+
+        /* 4. CUSTOM SCROLLBAR (Biar estetik) */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #2d1b4e; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #8b5cf6; 
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a78bfa; 
+        }
+
+        /* Helper untuk Card di halaman lain agar konsisten */
+        .card {
+            border: none !important;
+            border-radius: 15px !important;
+        }
+
+        /* Animasi Fade In */
+        @keyframes fadeIn {
+            from { 
+                opacity: 0; 
+                transform: translateY(20px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+
+        .content-wrapper {
+            animation: fadeIn 0.8s ease-out;
+        }
+    </style>
+    
+    <!-- Custom CSS untuk halaman spesifik -->
+    <th:block layout:fragment="extra-css"></th:block>
+</head>
+
+<body>
+
+    <!-- NAVBAR START -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-glass sticky-top py-3 mb-4 shadow-sm">
+        <div class="container">
+            
+            <!-- LOGO -->
+            <a class="navbar-brand d-flex align-items-center" th:href="@{/barang}">
+                <i class="bi bi-tags-fill text-warning me-2 fs-4"></i>
+                <span class="text-white">GRACE</span><span class="text-info ms-1">THRIFT</span>
+            </a>
+            
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <!-- MENU TENGAH -->
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item px-2">
+                        <a class="nav-link active" th:href="@{/barang}">
+                            <i class="bi bi-grid-fill me-1"></i> DASHBOARD
+                        </a>
+                    </li>
+                </ul>
+                    
+                <!-- MENU KANAN (LOGOUT) -->
+                <div class="d-flex align-items-center">
+                    <span class="text-white-50 small me-3 d-none d-lg-block">
+                        <i class="bi bi-person-circle me-1"></i> Admin Panel
+                    </span>
+                    <form th:action="@{/logout}" method="post">
+                        <button class="btn btn-sm btn-logout px-4 fw-bold" type="submit">
+                            KELUAR <i class="bi bi-box-arrow-right ms-2"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!-- NAVBAR END -->
+
+    <!-- AREA KONTEN UTAMA -->
+    <div class="container content-wrapper">
+        <div layout:fragment="content">
+            <!-- Konten dari halaman child akan muncul di sini -->
+        </div>
+    </div>
+
+    <!-- FOOTER SEDERHANA -->
+    <footer class="text-center text-white-50 py-4 mt-5">
+        <small>&copy; 2025 Grace Thrift Store. Curated with <i class="bi bi-heart-fill text-danger"></i></small>
+    </footer>
+
+    <!-- Script Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JS untuk halaman spesifik -->
+    <th:block layout:fragment="extra-js"></th:block>
+</body>
+</html>

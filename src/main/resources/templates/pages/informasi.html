@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/base}">
+
+<head>
+    <title>Information - Grace Thrift</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .info-page {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 50%, #14b8a6 100%);
+            padding: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Animated background particles */
+        .info-page::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(255, 255, 255, 0.06) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -30px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+
+        /* Glowing orbs */
+        .info-page::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(circle at 30% 40%, rgba(14, 165, 233, 0.2) 0%, transparent 30%),
+                radial-gradient(circle at 70% 60%, rgba(6, 182, 212, 0.2) 0%, transparent 30%),
+                radial-gradient(circle at 50% 80%, rgba(20, 184, 166, 0.2) 0%, transparent 30%);
+            animation: rotate 30s linear infinite;
+            z-index: 0;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .back-button-container {
+            max-width: 100%;
+            padding: 30px 40px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .btn-back {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 15px 35px;
+            border-radius: 50px;
+            font-weight: 700;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            font-size: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-back::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-back:hover::before {
+            left: 100%;
+        }
+
+        .btn-back:hover {
+            transform: translateY(-3px) scale(1.05);
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-back i {
+            font-size: 1.3rem;
+            transition: transform 0.3s ease;
+        }
+
+        .btn-back:hover i {
+            transform: translateX(-5px);
+        }
+
+        .container {
+            max-width: 100%;
+            padding: 0;
+            margin: 0;
+        }
+
+        .info-card {
+            background: transparent;
+            border-radius: 0;
+            overflow: visible;
+            box-shadow: none;
+            position: relative;
+            z-index: 10;
+        }
+
+        .info-header {
+            background: transparent;
+            padding: 80px 40px 100px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-header .store-icon {
+            font-size: 5rem;
+            margin-bottom: 30px;
+            filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.2));
+            animation: bounce 2s ease-in-out infinite;
+            position: relative;
+            z-index: 2;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .info-header h1 {
+            position: relative;
+            z-index: 2;
+            color: white;
+            font-weight: 900;
+            font-size: 3.5rem;
+            margin: 0;
+            text-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+            letter-spacing: 2px;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 5px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 255, 255, 0.3); }
+            50% { text-shadow: 0 5px 30px rgba(0, 0, 0, 0.3), 0 0 40px rgba(255, 255, 255, 0.5); }
+        }
+
+        /* Sparkles */
+        .sparkle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+            animation: sparkleAnim 2s ease-in-out infinite;
+            opacity: 0;
+        }
+
+        @keyframes sparkleAnim {
+            0%, 100% { opacity: 0; transform: scale(0); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+
+        .info-header .sparkle:nth-child(1) { top: 20%; left: 15%; animation-delay: 0s; }
+        .info-header .sparkle:nth-child(2) { top: 40%; right: 20%; animation-delay: 0.5s; }
+        .info-header .sparkle:nth-child(3) { bottom: 35%; left: 25%; animation-delay: 1s; }
+        .info-header .sparkle:nth-child(4) { top: 60%; right: 30%; animation-delay: 1.5s; }
+
+        .info-body {
+            padding: 60px 80px 80px;
+            position: relative;
+            background: white;
+            border-radius: 40px 40px 0 0;
+            margin-top: -40px;
+            box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.1);
+        }
+
+        .info-section {
+            margin-bottom: 40px;
+            padding: 35px;
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.05) 0%, rgba(6, 182, 212, 0.05) 100%);
+            border-radius: 25px;
+            border: 2px solid transparent;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Gradient border effect */
+        .info-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 25px;
+            padding: 2px;
+            background: linear-gradient(135deg, #00f5f5, #06b6d4, #12898d);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .info-section:hover::before {
+            opacity: 1;
+        }
+
+        /* Shine effect on hover */
+        .info-section::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 30%,
+                rgba(255, 255, 255, 0.5) 50%,
+                transparent 70%
+            );
+            transform: translateX(-100%) translateY(-100%);
+            transition: transform 0.6s;
+        }
+
+        .info-section:hover::after {
+            transform: translateX(0) translateY(0);
+        }
+
+        .info-section:hover {
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: 0 15px 40px rgba(14, 165, 233, 0.2);
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.08) 0%, rgba(6, 182, 212, 0.08) 100%);
+        }
+
+        .info-section h4 {
+            background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 800;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .info-section .icon {
+            font-size: 2.5rem;
+            filter: drop-shadow(0 4px 8px rgba(14, 165, 233, 0.3));
+            animation: iconFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes iconFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-5px) rotate(5deg); }
+        }
+
+        .info-section p {
+            color: #4a5568;
+            line-height: 2;
+            font-size: 1.15rem;
+            margin: 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .info-section strong {
+            color: #0ea5e9;
+            font-weight: 700;
+        }
+
+        .schedule-item {
+            padding: 18px 25px;
+            margin: 12px 0;
+            background: linear-gradient(90deg, rgba(14, 165, 233, 0.08) 0%, transparent 100%);
+            border-radius: 15px;
+            border-left: 5px solid #0ea5e9;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        .schedule-item:hover {
+            background: linear-gradient(90deg, rgba(14, 165, 233, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%);
+            transform: translateX(10px);
+            border-left-width: 7px;
+            box-shadow: 0 5px 20px rgba(14, 165, 233, 0.15);
+        }
+
+        .about-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 50%, #14b8a6 100%);
+            color: white;
+            padding: 15px 35px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-top: 25px;
+            box-shadow: 0 10px 30px rgba(14, 189, 233, 0.3);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            z-index: 2;
+        }
+
+        .about-badge::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .about-badge:hover {
+            transform: scale(1.08);
+            box-shadow: 0 15px 45px rgba(14, 165, 233, 0.4);
+        }
+
+        .about-badge:hover::before {
+            left: 100%;
+        }
+
+        @media (max-width: 768px) {
+            .info-header h1 {
+                font-size: 2.2rem;
+            }
+
+            .info-body {
+                padding: 40px 25px 60px;
+                border-radius: 30px 30px 0 0;
+            }
+
+            .info-section {
+                padding: 25px;
+                margin-bottom: 25px;
+            }
+
+            .back-button-container {
+                padding: 20px;
+            }
+        }
+
+        /* Loading animation */
+        .row {
+            animation: fadeIn 1s ease-out 0.3s both;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div layout:fragment="content" class="info-page">
+        <div class="back-button-container">
+            <a href="/" class="btn-back">
+                <i class="bi bi-arrow-left-circle-fill"></i>
+                Back to Home
+            </a>
+        </div>
+
+        <div class="container">
+            <div class="info-card">
+                <div class="info-header">
+                    <div class="sparkle"></div>
+                    <div class="sparkle"></div>
+                    <div class="sparkle"></div>
+                    <div class="sparkle"></div>
+                    <div class="store-icon">🏪</div>
+                    <h1>Grace Thrift Store</h1>
+                </div>
+
+                <div class="info-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="info-section">
+                                <h4>
+                                    <span class="icon">📍</span>
+                                    Address
+                                </h4>
+                                <p><strong>Jl. Thrift Store No. 123</strong><br>Sitoluama, Laguboti, Sumatera Utara, Indonesia</p>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="info-section">
+                                <h4>
+                                    <span class="icon">📞</span>
+                                    Contact
+                                </h4>
+                                <p><strong>WhatsApp:</strong><br>0813-6227-0549</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-section">
+                        <h4>
+                            <span class="icon">⏰</span>
+                            Operating Hours
+                        </h4>
+                        <div class="schedule-item">
+                            <strong>Monday - Wednesday:</strong> 09.00 - 21.00 WIB
+                        </div>
+                        <div class="schedule-item">
+                            <strong>Sunday:</strong> 10.00 - 18.00 WIB
+                        </div>
+                    </div>
+
+                    <div class="info-section">
+                        <h4>
+                            <span class="icon">ℹ️</span>
+                            About Us
+                        </h4>
+                        <p>
+                            Grace Thrift Store menyediakan barang thrift original dengan kualitas terbaik. 
+                            Semua barang dijamin <strong>100% original</strong> dan kondisi seperti baru. 
+                            Kami berkomitmen memberikan pengalaman berbelanja thrift yang menyenangkan 
+                            dengan koleksi pilihan yang selalu update.
+                        </p>
+                        <span class="about-badge">✨ Premium Quality Guaranteed</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layouts/base}">
+
+<head>
+    <title>Edit Barang - Grace Thrift</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #050505;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(236, 72, 153, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
+        }
+
+        .floating-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .shape {
+            position: absolute;
+            opacity: 0.03;
+        }
+
+        .shape-1 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            border-radius: 50%;
+            top: 10%;
+            left: -5%;
+            animation: float1 20s ease-in-out infinite;
+            filter: blur(60px);
+        }
+
+        .shape-2 {
+            width: 250px;
+            height: 250px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border-radius: 50%;
+            bottom: 10%;
+            right: -5%;
+            animation: float2 25s ease-in-out infinite;
+            filter: blur(60px);
+        }
+
+        .shape-3 {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, #ec4899, #f59e0b);
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            top: 50%;
+            left: 50%;
+            animation: float3 30s ease-in-out infinite;
+            filter: blur(60px);
+        }
+
+        @keyframes float1 {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(100px, -100px) rotate(120deg); }
+            66% { transform: translate(-50px, 50px) rotate(240deg); }
+        }
+
+        @keyframes float2 {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(-80px, 80px) rotate(-120deg); }
+            66% { transform: translate(60px, -60px) rotate(-240deg); }
+        }
+
+        @keyframes float3 {
+            0%, 100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+            50% { transform: translate(-50%, -50%) scale(1.2) rotate(180deg); }
+        }
+
+        /* Main Container */
+        .page-wrapper {
+            position: relative;
+            z-index: 10;
+            padding: 60px 24px;
+            min-height: 100vh;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Back Button - Floating Style */
+        .back-btn {
+            position: fixed;
+            top: 24px;
+            left: 24px;
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 100;
+        }
+
+        .back-btn:hover {
+            background: rgba(139, 92, 246, 0.2);
+            border-color: rgba(139, 92, 246, 0.5);
+            color: white;
+            transform: translateX(-5px);
+        }
+
+        .back-btn i {
+            font-size: 20px;
+        }
+
+        /* Header Section */
+        .edit-header {
+            text-align: center;
+            margin-bottom: 48px;
+            animation: fadeInDown 0.6s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .edit-icon {
+            width: 72px;
+            height: 72px;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.2));
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            border-radius: 24px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .edit-icon::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(236, 72, 153, 0.1));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .edit-icon:hover::before {
+            opacity: 1;
+        }
+
+        .edit-icon i {
+            font-size: 32px;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            
+            -webkit-text-fill-color: transparent;
+            z-index: 1;
+        }
+
+        .edit-title {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, rgba(255, 255, 255, 0.7));
+            
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .edit-subtitle {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.95rem;
+            font-weight: 400;
+        }
+
+        /* Form Container */
+        .form-container {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 28px;
+            padding: 40px;
+            animation: fadeInUp 0.6s ease-out 0.2s both;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(139, 92, 246, 0.5) 20%, 
+                rgba(236, 72, 153, 0.5) 80%, 
+                transparent
+            );
+        }
+
+        /* Form Groups */
+        .form-group {
+            margin-bottom: 32px;
+        }
+
+        .form-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            letter-spacing: 0.3px;
+        }
+
+        .form-label i {
+            color: #8b5cf6;
+            font-size: 16px;
+        }
+
+        /* Input Styles */
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1.5px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 14px 18px;
+            color: white;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .form-input::placeholder,
+        .form-textarea::placeholder {
+            color: rgba(255, 255, 255, 0.25);
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(139, 92, 246, 0.5);
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+        }
+
+        .form-select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%238b5cf6' d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 18px center;
+            padding-right: 50px;
+        }
+
+        .form-select option {
+            background: #1a1a1a;
+            color: white;
+            padding: 12px;
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 120px;
+            font-family: inherit;
+        }
+
+        .form-hint {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.8rem;
+            margin-top: 8px;
+        }
+
+        .form-hint i {
+            color: rgba(139, 92, 246, 0.6);
+        }
+
+        /* Grid Layout */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        /* File Upload */
+        .file-upload-area {
+            position: relative;
+            border: 2px dashed rgba(139, 92, 246, 0.3);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            background: rgba(139, 92, 246, 0.03);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .file-upload-area:hover {
+            border-color: rgba(139, 92, 246, 0.5);
+            background: rgba(139, 92, 246, 0.05);
+        }
+
+        .file-upload-area input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .upload-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 12px;
+            background: rgba(139, 92, 246, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .upload-icon i {
+            font-size: 24px;
+            color: #8b5cf6;
+        }
+
+        .upload-text {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .upload-subtext {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.8rem;
+            margin-top: 4px;
+        }
+
+        /* Image Preview */
+        .image-preview {
+            margin-top: 24px;
+            padding: 20px;
+            background: rgba(139, 92, 246, 0.05);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 16px;
+        }
+
+        .preview-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .preview-label i {
+            color: #8b5cf6;
+        }
+
+        .preview-content {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .preview-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 2px solid rgba(139, 92, 246, 0.3);
+        }
+
+        .preview-info {
+            flex: 1;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.85rem;
+        }
+
+        .preview-info-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .preview-info-item i {
+            color: #8b5cf6;
+            font-size: 14px;
+        }
+
+        /* Divider */
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.1) 50%, 
+                transparent
+            );
+            margin: 40px 0;
+        }
+
+        /* Action Buttons */
+        .form-actions {
+            display: flex;
+            gap: 16px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 16px 32px;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border: none;
+            text-decoration: none;
+        }
+
+        .btn-cancel {
+            background: rgba(255, 255, 255, 0.03);
+            color: rgba(255, 255, 255, 0.7);
+            border: 1.5px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            color: white;
+            box-shadow: 0 8px 24px rgba(139, 92, 246, 0.3);
+            border: 1px solid rgba(139, 92, 246, 0.5);
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(139, 92, 246, 0.5);
+        }
+
+        .btn i {
+            font-size: 18px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .page-wrapper {
+                padding: 40px 20px;
+            }
+
+            .form-container {
+                padding: 28px 24px;
+            }
+
+            .edit-title {
+                font-size: 1.5rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-actions {
+                flex-direction: column-reverse;
+            }
+
+            .back-btn {
+                width: 44px;
+                height: 44px;
+            }
+
+            .preview-content {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div layout:fragment="content">
+        <!-- Background -->
+        <div class="bg-canvas"></div>
+        <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+        </div>
+
+        <!-- Back Button -->
+        <a th:href="@{/barang}" class="back-btn">
+            <i class="bi bi-arrow-left"></i>
+        </a>
+
+        <div class="page-wrapper">
+            <!-- Header -->
+            <div class="edit-header">
+                <div class="edit-icon">
+                    <i class="bi bi-pencil-square"></i>
+                </div>
+                <h1 class="edit-title">Edit Item</h1>
+                <p class="edit-subtitle">Update your thrift product details</p>
+            </div>
+
+            <!-- Form -->
+            <div class="form-container">
+                <form th:action="@{/barang/update}" method="post" enctype="multipart/form-data" th:object="${barang}">
+                    
+                    <input type="hidden" th:field="*{id}">
+                    
+                    <!-- Category -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="bi bi-grid-3x3-gap-fill"></i>
+                            Category
+                        </label>
+                        <select class="form-select" th:field="*{kategori}" required>
+                            <option value="" disabled selected>Select category...</option>
+                            <option value="Jaket">🧥 Jacket</option>
+                            <option value="Topi">🧢 Hat</option>
+                            <option value="Sepatu">👟 Shoes</option>
+                            <option value="Celana">👖 Pants</option>
+                            <option value="Kaos">👕 Shirt</option>
+                            <option value="Kemeja">👔 Formal Shirt</option>
+                            <option value="Sweater">🧶 Sweater</option>
+                            <option value="Hoodie">🧥 Hoodie</option>
+                            <option value="Dress">👗 Dress</option>
+                            <option value="Rok">👗 Skirt</option>
+                            <option value="Tas">👜 Bag</option>
+                            <option value="Aksesoris">💍 Accessories</option>
+                            <option value="Lainnya">📦 Others</option>
+                        </select>
+                        <div class="form-hint">
+                            <i class="bi bi-lightbulb"></i>
+                            Choose appropriate category
+                        </div>
+                    </div>
+
+                    <!-- Product Name -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="bi bi-tag-fill"></i>
+                            Product Name
+                        </label>
+                        <input type="text" class="form-input" th:field="*{namaBarang}" 
+                            placeholder="e.g. Nike Air Jordan 1 Chicago" required>
+                        <div class="form-hint">
+                            <i class="bi bi-lightbulb"></i>
+                            Use clear and descriptive name
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="bi bi-card-text"></i>
+                            Condition & Price Details
+                        </label>
+                        <textarea class="form-textarea" th:field="*{deskripsi}" 
+                            placeholder="Describe condition, size, color, and other details..."></textarea>
+                        <div class="form-hint">
+                            <i class="bi bi-lightbulb"></i>
+                            More details attract more buyers
+                        </div>
+                    </div>
+
+                    <!-- Date & Photo Grid -->
+                    <div class="form-grid">
+                        <!-- Date -->
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="bi bi-calendar3"></i>
+                                Restock Date
+                            </label>
+                            <input type="datetime-local" class="form-input" th:field="*{tanggalMasuk}" required>
+                            <div class="form-hint">
+                                <i class="bi bi-clock"></i>
+                                When did it arrive?
+                            </div>
+                        </div>
+
+                        <!-- Photo Upload -->
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="bi bi-camera-fill"></i>
+                                Update Photo
+                            </label>
+                            <div class="file-upload-area">
+                                <input type="file" name="fileGambar" accept="image/*" id="fileInput">
+                                <div class="upload-icon">
+                                    <i class="bi bi-cloud-upload"></i>
+                                </div>
+                                <div class="upload-text" id="uploadText">Choose new photo</div>
+                                <div class="upload-subtext">Leave blank to keep current</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Current Photo Preview -->
+                    <div th:if="${barang.foto != null}" class="image-preview">
+                        <div class="preview-label">
+                            <i class="bi bi-image"></i>
+                            Current Photo
+                        </div>
+                        <div class="preview-content">
+                            <img th:src="@{'/uploads/' + ${barang.foto}}" alt="Preview" class="preview-image">
+                            <div class="preview-info">
+                                <div class="preview-info-item">
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    <span>Currently displayed</span>
+                                </div>
+                                <div class="preview-info-item">
+                                    <i class="bi bi-arrow-repeat"></i>
+                                    <span>Upload new to replace</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <!-- Action Buttons -->
+                    <div class="form-actions">
+                        <a th:href="@{/barang}" class="btn btn-cancel">
+                            <i class="bi bi-x-circle"></i>
+                            Cancel
+                        </a>
+                        <button type="submit" class="btn btn-submit">
+                            <i class="bi bi-check-circle"></i>
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Update filename display
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const fileName = e.target.files[0]?.name || 'Choose new photo';
+            const displayName = fileName.length > 20 ? fileName.substring(0, 20) + '...' : fileName;
+            document.getElementById('uploadText').textContent = displayName;
+        });
+    </script>
+</body>
+</html>
